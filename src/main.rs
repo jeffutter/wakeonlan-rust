@@ -1,5 +1,4 @@
-extern crate clap;
-use clap::{App, Arg};
+use clap::{Arg, Command};
 use std::io::{Error, ErrorKind};
 use std::net::UdpSocket;
 
@@ -33,13 +32,13 @@ fn send_packet(mac: &str, host: &str) -> std::io::Result<()> {
 }
 
 fn main() {
-    let matches = App::new("Wake on Lan")
+    let matches = Command::new("Wake on Lan")
         .version("1.0")
         .author("Jeffry Utter <jeff@jeffutter.com>")
         .about("Sends a Magic Packet to wake a remote machine")
         .arg(
-            Arg::with_name("host")
-                .short("h")
+            Arg::new("host")
+                .short('h')
                 .long("host")
                 .value_name("HOST")
                 .help("The host to send the packet to")
@@ -47,8 +46,8 @@ fn main() {
                 .takes_value(true),
         )
         .arg(
-            Arg::with_name("mac")
-                .short("m")
+            Arg::new("mac")
+                .short('m')
                 .long("mac")
                 .value_name("MAC_ID")
                 .help("The MAC ID of the machine to wake")
