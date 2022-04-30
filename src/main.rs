@@ -1,15 +1,12 @@
 use clap::{Arg, Command};
-use std::io::{Error, ErrorKind};
 use std::net::UdpSocket;
+use anyhow::{Context, Result};
 
-fn send_packet(mac: &str, host: &str) -> std::io::Result<()> {
+fn send_packet(mac: &str, host: &str) -> Result<()> {
     let socket = UdpSocket::bind("0.0.0.0:0")?;
     socket.set_broadcast(true)?;
 
-    let hex_mac = match hex::decode(mac.replace(":", "")) {
-        Ok(mac) => mac,
-        Err(_reason) => return Err(Error::new(ErrorKind::InvalidInput, "Invalid MAC_ID!")), //: {:?}", reason),
-    };
+    let hex_mac = hex::decode(mac.replace(":", "")).context("Invalid MAC_ID!")?;
 
     let mut packet = vec![0u8; 102];
 
@@ -22,9 +19,6 @@ fn send_packet(mac: &str, host: &str) -> std::io::Result<()> {
             packet[6 + (i * 6) + j] = hex_mac[j];
         }
     }
-
-    //println!("{}", host);
-    //println!("{:?}", packet);
 
     socket.send_to(&packet, (host, 9))?;
 
