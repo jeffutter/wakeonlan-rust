@@ -9,7 +9,7 @@ edition = "2021"
 [dependencies]
 hex = "~0.4"
 anyhow = "1"
-clap = { version = "3", default-features = false, features = ["std", "suggestions", "color"] }
+clap = { version = "4", default-features = false, features = ["std", "suggestions", "color"] }
 
 [profile.release]
 opt-level = 3

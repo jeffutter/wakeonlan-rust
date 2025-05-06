@@ -1,6 +1,6 @@
+use anyhow::{Context, Result};
 use clap::{Arg, Command};
 use std::net::UdpSocket;
-use anyhow::{Context, Result};
 
 fn send_packet(mac: &str, host: &str) -> Result<()> {
     let socket = UdpSocket::bind("0.0.0.0:0")?;
@@ -10,9 +10,9 @@ fn send_packet(mac: &str, host: &str) -> Result<()> {
 
     let mut packet = vec![0u8; 102];
 
-    for i in 0..6 {
+    (0..6).for_each(|i| {
         packet[i] = 0xFF;
-    }
+    });
 
     for i in 0..16 {
         for j in 0..6 {
@@ -36,8 +36,7 @@ fn main() {
                 .long("host")
                 .value_name("HOST")
                 .help("The host to send the packet to")
-                .required(true)
-                .takes_value(true),
+                .required(true),
         )
         .arg(
             Arg::new("mac")
@@ -45,13 +44,12 @@ fn main() {
                 .long("mac")
                 .value_name("MAC_ID")
                 .help("The MAC ID of the machine to wake")
-                .required(true)
-                .takes_value(true),
+                .required(true),
         )
         .get_matches();
 
-    let mac = matches.value_of("mac").unwrap();
-    let host = matches.value_of("host").unwrap();
+    let mac = matches.get_one::<String>("mac").unwrap();
+    let host = matches.get_one::<String>("host").unwrap();
 
     match send_packet(mac, host) {
         Ok(()) => {
@@ -59,7 +57,7 @@ fn main() {
             std::process::exit(0);
         }
         Err(reason) => {
-            eprintln!("Failed to send Magic Packet: {}", reason.to_string());
+            eprintln!("Failed to send Magic Packet: {}", reason);
             std::process::exit(1);
         }
     };
